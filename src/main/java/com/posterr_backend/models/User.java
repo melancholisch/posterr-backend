@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import java.util.List;
 
+@Builder(builderMethodName = "userBuilder")
 @Getter
 @Setter
 @NoArgsConstructor
