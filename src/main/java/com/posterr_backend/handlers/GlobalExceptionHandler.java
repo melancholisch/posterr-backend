@@ -13,4 +13,19 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleMaxPostsPerDay(MaxPostsPerDayException ex) {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(ex.getMessage());
     }
+
+    @ExceptionHandler(OwnPostException.class)
+    public ResponseEntity<String> handleOwnPostRepost(OwnPostException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RepostWithContentException.class)
+    public ResponseEntity<String> handleRepostWithContent(RepostWithContentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }

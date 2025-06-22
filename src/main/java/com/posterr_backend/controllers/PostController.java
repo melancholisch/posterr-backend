@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -37,31 +36,9 @@ public class PostController {
             @RequestBody PostRequest request
     ) {
         User user = userService.getUser(userId);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        LocalDateTime since = LocalDateTime.now().minusHours(24);
-        long postsLast24h = postRepository.countByUserAndCreatedAtAfter(user, since);
-        if (postsLast24h >= 5) throw new IllegalArgumentException("Limite de 5 posts em 24h atingido.");
+        if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
-        Post post;
-        if (request.getOriginalPostId() != null) {
-            Post originalPost = postRepository.findById(request.getOriginalPostId()).orElse(null);
-            if (originalPost == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-            if (originalPost.getUser().getId().equals(user.getId())) {
-
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-            }
-
-            if (request.getContent() != null && !request.getContent().isBlank()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-            }
-            post = postService.repost(user, originalPost);
-        } else {
-            post = postService.createPost(user, request.getContent());
-        }
+        Post post = postService.createOrRepost(user, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(post);
     }
 }
