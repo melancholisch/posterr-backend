@@ -21,12 +21,17 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public List<Post> getPosts(String sort) {
-        if ("latest".equalsIgnoreCase(sort)) {
-            return postRepository.findAllByOrderByCreatedAtDesc();
+    public List<Post> getPosts(String sort, String keyword) {
+        if (keyword != null && !keyword.isBlank()) {
+            if ("trending".equalsIgnoreCase(sort)) {
+                return postRepository.findOriginalPostsByContentContainingOrderByRepostsDesc(keyword);
+            }
+            return postRepository.findOriginalPostsByContentContainingOrderByCreatedAtDesc(keyword);
         }
-
-        return postRepository.findAll();
+        if ("trending".equalsIgnoreCase(sort)) {
+            return postRepository.findOriginalPostsOrderByRepostsDesc();
+        }
+        return postRepository.findAllByOrderByCreatedAtDesc();
     }
 
     public Post createPost(User user, String content) {

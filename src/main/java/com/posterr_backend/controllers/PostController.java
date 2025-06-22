@@ -3,7 +3,6 @@ package com.posterr_backend.controllers;
 import com.posterr_backend.dtos.PostRequest;
 import com.posterr_backend.models.Post;
 import com.posterr_backend.models.User;
-import com.posterr_backend.repositories.PostRepository;
 import com.posterr_backend.services.PostService;
 import com.posterr_backend.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -17,17 +16,16 @@ import java.util.List;
 public class PostController {
     private final PostService postService;
     private final UserService userService;
-    private final PostRepository postRepository;
 
-    PostController(PostService postService, UserService userService, PostRepository postRepository) {
+    PostController(PostService postService, UserService userService) {
         this.postService = postService;
         this.userService = userService;
-        this.postRepository = postRepository;
     }
 
     @GetMapping
-    public List<Post> getPosts(@RequestParam(required = false, defaultValue = "latest") String sort) {
-        return postService.getPosts(sort);
+    public List<Post> getPosts(@RequestParam(required = false, defaultValue = "latest") String sort,
+                               @RequestParam(required = false) String keyword) {
+        return postService.getPosts(sort, keyword);
     }
 
     @PostMapping
