@@ -1,14 +1,10 @@
 package com.posterr_backend.repositories;
 
-
 import com.posterr_backend.models.Post;
 import com.posterr_backend.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-
 import java.time.LocalDateTime;
-
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post,Long> {
@@ -26,4 +22,7 @@ public interface PostRepository extends JpaRepository<Post,Long> {
 
     @Query("SELECT p FROM Post p WHERE p.isRepost = false AND p.content LIKE %:keyword% ORDER BY (SELECT COUNT(r) FROM Post r WHERE r.originalPost = p) DESC, p.createdAt DESC")
     List<Post> findOriginalPostsByContentContainingOrderByRepostsDesc(String keyword);
+
+    @Query("SELECT COUNT(p) FROM Post p WHERE p.isRepost = true AND p.user = :user AND p.originalPost = :originalPost")
+    long countRepostsByUserAndOriginalPost(User user, Post originalPost);
 }
